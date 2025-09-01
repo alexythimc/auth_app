@@ -6,33 +6,44 @@ class AuthService extends GetxService {
   final UserRepo userRepo = UserRepo();
   final LocalStorageService localStorageService = LocalStorageService();
 
-  void signUp(Map<String, dynamic> user) {
+  Future<void> signUp(Map<String, dynamic> user) async {
     try {
-      // call UserRepo API to sign up user
-      userRepo.addUser(user);
-      // Save user data to local storage
-      localStorageService.write('user', user);
-      print('AuthService:User signed up successfully: $user');
+      await userRepo.addUser(user);
+      await localStorageService.write('user', user);
     } catch (e) {
-      print('Error during sign up: $e');
+      throw Exception('Error signing up user: $e');
     }
+
+    print('AuthService: User signed up successfully: $user');
   }
 
   Future<bool> login(String email, String password) async {
     await Future.delayed(const Duration(seconds: 2));
 
     if (email.isEmpty || password.isEmpty) {
-      return false;
+      throw Exception('Email and password cannot be empty');
     }
 
-    if (await userRepo.userExists(email, password)) {
-      final newStatus = await userRepo.setIsLoggedIn(email, true);
-      if (newStatus != null) {
-        localStorageService.remove('user');
-        localStorageService.write('user', await userRepo.getUserByEmail(email));
-        localStorageService.read('user');
-        return newStatus;
-      }
+    // First check if user exists by email
+    final user = await userRepo.getUserByEmail(email);
+
+    if (user == null) {
+      throw Exception('User does not exist');
+    }
+
+    // Check password
+    if (user['password'] != password) {
+      throw Exception('Incorrect password');
+    }
+
+    // If everything is fine, log in user
+    final newStatus = await userRepo.setIsLoggedIn(email, true);
+    if (newStatus != null) {
+      localStorageService.remove('user');
+      localStorageService.write('user', user);
+      localStorageService.read('user');
+
+      return newStatus;
     }
 
     return false;

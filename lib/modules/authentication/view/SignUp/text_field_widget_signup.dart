@@ -6,36 +6,25 @@ import 'package:iconsax/iconsax.dart';
 
 import 'check_box.dart';
 
-class TextFieldWidgetSignUp extends StatefulWidget {
+class TextFieldWidgetSignUp extends StatelessWidget {
   final Rx<bool> isChecked;
+  final RxBool isObscure;
 
-  const TextFieldWidgetSignUp({super.key, required this.isChecked});
-
-  @override
-  State<TextFieldWidgetSignUp> createState() => _TextFieldWidgetSignUpState();
-}
-
-class _TextFieldWidgetSignUpState extends State<TextFieldWidgetSignUp> {
-  final TextEditingController firstNameController = TextEditingController();
-  final TextEditingController lastNameController = TextEditingController();
-  final TextEditingController usernameController = TextEditingController();
-  final TextEditingController emailController = TextEditingController();
-  final TextEditingController mobileNumberController = TextEditingController();
-  final TextEditingController passwordController = TextEditingController();
-
-  @override
-  void dispose() {
-    firstNameController.dispose();
-    lastNameController.dispose();
-    usernameController.dispose();
-    emailController.dispose();
-    mobileNumberController.dispose();
-    passwordController.dispose();
-    super.dispose();
-  }
+  const TextFieldWidgetSignUp({
+    super.key,
+    required this.isChecked,
+    required this.isObscure,
+  });
 
   @override
   Widget build(BuildContext context) {
+    final TextEditingController firstNameController = TextEditingController();
+    final TextEditingController lastNameController = TextEditingController();
+    final TextEditingController usernameController = TextEditingController();
+    final TextEditingController emailController = TextEditingController();
+    final TextEditingController mobileNumberController =
+        TextEditingController();
+    final TextEditingController passwordController = TextEditingController();
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Column(
@@ -99,24 +88,34 @@ class _TextFieldWidgetSignUpState extends State<TextFieldWidgetSignUp> {
           const SizedBox(height: TSizes.defaultSectionSpace),
 
           /// Password
-          TextFormField(
-            controller: passwordController,
-            decoration: const InputDecoration(
-              labelText: 'Password',
-              prefixIcon: Icon(Iconsax.password_check),
-              suffixIcon: Icon(Iconsax.eye_slash),
+          Obx(
+            () => TextFormField(
+              controller: passwordController,
+              decoration: InputDecoration(
+                labelText: 'Password',
+                prefixIcon: const Icon(Iconsax.password_check),
+                suffixIcon: IconButton(
+                  icon: Icon(
+                    isObscure.value ? Iconsax.eye_slash : Iconsax.eye,
+                    color: isObscure.value ? Colors.grey : Colors.blue,
+                  ),
+                  onPressed: () {
+                    isObscure.value = !isObscure.value;
+                  },
+                ),
+              ),
+              obscureText: isObscure.value,
             ),
-            obscureText: true,
           ),
 
           const SizedBox(height: TSizes.defaultSpace),
 
           /// Checkbox
-          CheckBoxWidget(isChecked: widget.isChecked),
+          CheckBoxWidget(isChecked: isChecked),
 
           Obx(
             () => SignUpWidget(
-              isChecked: widget.isChecked.value,
+              isChecked: isChecked.value,
               firstName: firstNameController.text.trim(),
               lastName: lastNameController.text.trim(),
               username: usernameController.text.trim(),

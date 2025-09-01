@@ -46,10 +46,12 @@ class UserService extends GetxService {
     return await _userRepo.getUserByEmail(email);
   }
 
-  void deleteUserById(int id) {
-    _userRepo.deleteUserById(id);
-    localStorageService.write('isLoggedIn', false);
-    localStorageService.remove('user');
+  Future<void> deleteUserById(int id) async {
+    await _userRepo.deleteUserById(id);
     print('Service: User deleted successfully');
+  }
+
+  Future<void> addUser(Map<String, String> map) async {
+    await _userRepo.addUser(map);
   }
 }

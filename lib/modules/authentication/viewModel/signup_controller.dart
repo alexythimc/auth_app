@@ -1,28 +1,30 @@
 import 'package:demo/data/models/user.dart';
 import 'package:demo/data/services/auth_service.dart';
-import 'package:demo/modules/authentication/view/email_verification/emailVerificationScreen.dart';
-import 'package:demo/modules/authentication/view/email_verification/success_screen.dart';
+import 'package:demo/data/services/user_service.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 
 class SignUpController extends GetxController {
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   final Rx<bool> isChecked = false.obs;
+  final UserService userService = UserService();
   final AuthService auth = AuthService();
+
+  final RxBool isObscure = true.obs;
 
   void changeCheckbox(bool bool) {
     debugPrint("Checkbox value: $bool");
     isChecked.value = bool;
   }
 
-  void signUp({
+  Future<void> signUp({
     required String email,
     required String password,
     required String firstName,
     required String lastName,
     required String username,
     required String phone,
-  }) {
+  }) async {
     // user to map and send to api
     final user = User(
       email: email,
@@ -31,7 +33,18 @@ class SignUpController extends GetxController {
     ).toJson();
     debugPrint("User data: $user");
 
-    auth.signUp(user);
+    try {
+      await auth.signUp(user);
+    } catch (e) {
+      Get.snackbar(
+        "Sign Up Error",
+        e.toString(),
+        backgroundColor: const Color(0xFFFF0000),
+        colorText: const Color(0xFFFFFFFF),
+      );
+      return;
+    }
+    Get.toNamed('/');
     Get.showSnackbar(
       const GetSnackBar(
         title: 'Success',
@@ -39,18 +52,7 @@ class SignUpController extends GetxController {
         duration: Duration(seconds: 2),
       ),
     );
-    Get.to(
-      () =>
-          const Emailverificationscreen(), // Replace with your actual email verification screen widget
-      transition: Transition.fadeIn,
-    );
   }
 
-  void verifyEmail() {
-    Get.to(
-      () =>
-          const SuccessScreen(), // Replace with your actual email verification success screen widget
-      transition: Transition.downToUp,
-    );
-  }
+  void verifyEmail() {}
 }

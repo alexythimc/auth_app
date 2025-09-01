@@ -9,6 +9,8 @@ class LoginController extends GetxController {
   final RxBool isPasswordVisible = false.obs;
   final RxBool isLoading = false.obs;
 
+  final RxBool isObscure = true.obs;
+
   void togglePasswordVisibility() {
     isPasswordVisible.value = !isPasswordVisible.value;
   }
@@ -23,13 +25,22 @@ class LoginController extends GetxController {
   Future<void> login(String email, String password) async {
     print("in login method");
 
-    if (await _authService.login(email, password)) {
-      Get.offAllNamed('/home');
-      Get.snackbar("Login", "Login Successful");
-    } else {
+    try {
+      if (await _authService.login(email, password)) {
+        Get.offAllNamed('/home');
+        Get.snackbar("Login", "Login Successful");
+      } else {
+        Get.snackbar(
+          "Login",
+          "Login Failed",
+          backgroundColor: const Color(0xFFFF0000),
+          colorText: const Color(0xFFFFFFFF),
+        );
+      }
+    } catch (e) {
       Get.snackbar(
-        "Login",
-        "Login Failed",
+        "Login Error",
+        e.toString(),
         backgroundColor: const Color(0xFFFF0000),
         colorText: const Color(0xFFFFFFFF),
       );

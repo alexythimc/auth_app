@@ -1,5 +1,6 @@
 import 'package:demo/data/services/user_service.dart';
 import 'package:demo/modules/home/view/profile_page/my_profile.dart';
+import 'package:demo/modules/home/view/profile_page/user_details.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
@@ -42,31 +43,28 @@ class HomeController extends GetxController {
     }
   }
 
-  // list of users method
-  Future<List<Map<String, dynamic>>> getUsers() async {
-    isLoading.value = true;
-    users.assignAll(await _userService.fetchUsersData());
-    isLoading.value = false;
-    return users;
-  }
-
-  /// 🔹 Refresh users list from the service
-  Future<void> refreshUsers() async {
-    await getUsers();
-  }
-
-  /// 🔹 Update user in local list immediately after successful update
-  void updateUserInList(Map<String, dynamic> updatedUser) {
-    final index = users.indexWhere((user) => user['id'] == updatedUser['id']);
-    if (index != -1) {
-      users[index] = updatedUser;
-      users.refresh(); // Trigger UI update
+  Future<void> addUser({
+    required String firstName,
+    required String lastName,
+    required String email,
+    required String password,
+  }) async {
+    // Add user to local database or API
+    try {
+      await _userService.addUser({
+        'name':
+            '$firstName '
+            '$lastName',
+        'email': email,
+        'password': password,
+      });
+      Get.snackbar("Success", "User added successfully");
+      refreshUsers();
+      Get.toNamed('/home');
+      return;
+    } catch (e) {
+      Get.snackbar("Error", "Failed to add user: $e");
     }
-  }
-
-  /// 🔹 Remove user from local list immediately after deletion
-  void removeUserFromList(int userId) {
-    users.removeWhere((user) => user['id'] == userId);
   }
 
   void editUser(Map<String, dynamic> user) {
@@ -74,19 +72,18 @@ class HomeController extends GetxController {
     Get.to(() => MyProfile(user: user, title: 'Profile Page'));
   }
 
-  void deleteUser(int id) {
+  void deleteUser(int id) async {
     // show dialog to confirm delete
     Get.defaultDialog(
       title: "Delete User",
       middleText: "Are you sure you want to delete this user?",
       textCancel: "No",
       textConfirm: "Yes",
-      onConfirm: () {
+      onConfirm: () async {
         try {
-          _userService.deleteUserById(id);
+          await _userService.deleteUserById(id);
           removeUserFromList(id); // Update local list immediately
           Get.back();
-          Get.offAllNamed('/');
           Get.snackbar("Delete User", "User Deleted Successfully");
         } catch (e) {
           Get.back();
@@ -144,11 +141,48 @@ class HomeController extends GetxController {
     }
   }
 
-  @override
-  void onClose() {
-    nameController.value.dispose();
-    emailController.value.dispose();
-    passwordController.value.dispose();
-    super.onClose();
+  // view User details
+  void viewUser(Map<String, dynamic> user) {
+    setUser(user);
+    isReadOnly.value = true; // ensure read only mode
+    // navigate to UserDetails page
+    Get.to(() => UserDetails(user: user));
   }
+
+  /// METHODS FOR USER LIST MANAGEMENT
+
+  //list of users
+  Future<List<Map<String, dynamic>>> getUsers() async {
+    isLoading.value = true;
+    users.assignAll(await _userService.fetchUsersData());
+    isLoading.value = false;
+    return users;
+  }
+
+  // Refresh users list from the service
+  Future<void> refreshUsers() async {
+    await getUsers();
+  }
+
+  // Update user in local list immediately after successful update
+  void updateUserInList(Map<String, dynamic> updatedUser) {
+    final index = users.indexWhere((user) => user['id'] == updatedUser['id']);
+    if (index != -1) {
+      users[index] = updatedUser;
+      users.refresh(); // Trigger UI update
+    }
+  }
+
+  // Remove user from local list immediately after deletion
+  void removeUserFromList(int userId) {
+    users.removeWhere((user) => user['id'] == userId);
+  }
+
+  // @override
+  // void onClose() {
+  //   nameController.value.dispose();
+  //   emailController.value.dispose();
+  //   passwordController.value.dispose();
+  //   super.onClose();
+  // }
 }

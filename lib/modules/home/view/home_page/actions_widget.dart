@@ -22,7 +22,7 @@ class ActionsWidget extends StatelessWidget {
           child: Icon(
             isReadOnly.value ? Icons.edit : Icons.edit_off,
             key: ValueKey(isReadOnly.value), // ✅ key based on value
-            color: isReadOnly.value ? Colors.black : Colors.blue,
+            color: !isReadOnly.value ? Colors.blue : null,
           ),
         ),
         onPressed: () {

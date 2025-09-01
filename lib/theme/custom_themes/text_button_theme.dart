@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 class TTextButtonTheme {
   // Customizable Text Button Theme with TextButtonThemeData for both light and dark themes
@@ -14,12 +13,9 @@ class TTextButtonTheme {
       textStyle: TextStyle(
         fontSize: 16,
         color: Colors.black,
-        fontFamily: GoogleFonts.rajdhani().fontFamily,
         fontWeight: FontWeight.w600,
       ),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
     ),
   );
   static final dark = TextButtonThemeData(
@@ -33,12 +29,9 @@ class TTextButtonTheme {
       textStyle: TextStyle(
         fontSize: 16,
         color: Colors.white,
-        fontFamily: GoogleFonts.rajdhani().fontFamily,
         fontWeight: FontWeight.w600,
       ),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
     ),
   );
   final Color textColor;

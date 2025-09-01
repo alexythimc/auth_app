@@ -3,9 +3,7 @@ import 'package:demo/utils/sizes.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import 'copyright.dart';
 import 'google_facebook_logo.dart';
-import 'login_logo_image.dart';
 import 'or_divider.dart';
 import 'text_field_widget.dart';
 
@@ -18,11 +16,22 @@ class LoginPage extends GetView<LoginController> {
       body: SingleChildScrollView(
         child: SafeArea(
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               //add image here
               SizedBox(height: TSizes.appBarHeight),
-              const LoginLogoImageNTitle(),
-              TextfieldsWidget(login: controller.login),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  'Welcome Back,Buddy!',
+                  style: Theme.of(context).textTheme.headlineMedium,
+                ),
+              ),
+
+              TextfieldsWidget(
+                login: controller.login,
+                isObscure: controller.isObscure,
+              ),
               SizedBox(height: TSizes.gridViewSpacing),
 
               /// OR Divider
@@ -32,9 +41,6 @@ class LoginPage extends GetView<LoginController> {
               /// Social Media Buttons
               GoogleNFacebookLogo(),
               SizedBox(height: 24),
-
-              /// Footer
-              CopyRight(),
             ],
           ),
         ),

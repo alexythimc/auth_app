@@ -5,6 +5,17 @@ class UserRepo {
 
   Future<void> addUser(Map<String, dynamic> user) async {
     final db = await _databaseService.database;
+    // check if user with same email exists
+    final existingUser = await db.query(
+      'user',
+      where: 'email = ?',
+      whereArgs: [user['email']],
+    );
+    print('Existing user check: $existingUser');
+    if (existingUser.isNotEmpty) {
+      throw Exception('User with this email already exists');
+    }
+    print('Adding user: $user');
     await db.insert('user', user);
     print('User added successfully');
   }
@@ -42,14 +53,20 @@ class UserRepo {
       where: 'email = ?',
       whereArgs: [email],
     );
+    if (result[0]['password'] != password) {
+      print("Password mismatch for user: ${result[0]}");
+      Exception('Incorrect password');
+    }
     if (result.isNotEmpty && result[0]['password'] == password) {
       print("User found: ${result[0]}");
       return true;
     }
+
     return false;
   }
 
   Future<bool> setIsLoggedIn(String email, bool status) async {
+    print("Setting isLoggedIn for $email to $status");
     final db = await _databaseService.database;
     final rowsAffected = await db.update(
       'user',
@@ -57,6 +74,8 @@ class UserRepo {
       where: 'email = ?',
       whereArgs: [email],
     );
+    print("Rows affected: $rowsAffected");
+    print("isLoggedIn set to $status for $email");
     return rowsAffected > 0;
   }
 

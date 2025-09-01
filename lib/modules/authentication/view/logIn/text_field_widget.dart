@@ -6,8 +6,13 @@ import 'package:iconsax/iconsax.dart';
 
 class TextfieldsWidget extends StatelessWidget {
   final void Function(String, String) login;
+  final RxBool isObscure;
 
-  const TextfieldsWidget({super.key, required this.login});
+  const TextfieldsWidget({
+    super.key,
+    required this.login,
+    required this.isObscure,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -31,13 +36,24 @@ class TextfieldsWidget extends StatelessWidget {
             SizedBox(height: 16),
 
             /// Password
-            TextFormField(
-              controller: passwordController,
-              decoration: InputDecoration(
-                labelText: 'Password',
-                prefixIcon: Icon(Iconsax.password_check),
+            Obx(
+              () => TextFormField(
+                controller: passwordController,
+                decoration: InputDecoration(
+                  labelText: 'Password',
+                  prefixIcon: Icon(Iconsax.password_check),
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      isObscure.value ? Iconsax.eye_slash : Iconsax.eye,
+                      color: isObscure.value ? Colors.grey : Colors.blue,
+                    ),
+                    onPressed: () {
+                      isObscure.value = !isObscure.value;
+                    },
+                  ),
+                ),
+                obscureText: isObscure.value ? true : false,
               ),
-              obscureText: true,
             ),
             SizedBox(height: 16),
 

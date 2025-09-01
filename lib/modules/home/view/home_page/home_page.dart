@@ -18,10 +18,12 @@ class HomePage extends GetView<HomeController> {
           style: Theme.of(context).textTheme.headlineMedium,
         ),
         actions: [
+          // refresh button
           IconButton(
-            onPressed: () => Get.toNamed('/myProfile'),
-            icon: const Icon(Icons.person),
+            onPressed: () => controller.refreshUsers(),
+            icon: const Icon(Icons.refresh),
           ),
+
           IconButton(
             icon: const Icon(Icons.logout),
             onPressed: () => controller.signOut(),
@@ -30,6 +32,22 @@ class HomePage extends GetView<HomeController> {
       ),
       body: Column(
         children: [
+          Container(
+            margin: const EdgeInsets.symmetric(horizontal: 8.0),
+            width: double.infinity,
+            height: 100,
+
+            child: ElevatedButton.icon(
+              onPressed: () => Get.toNamed('/addUser'),
+              icon: const Icon(Icons.add),
+              label: const Text("Add / Register User"),
+              style: ElevatedButton.styleFrom(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
+            ),
+          ),
           ListOfUsersTitle(),
 
           Expanded(

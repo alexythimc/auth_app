@@ -15,13 +15,17 @@ class SignUp extends GetView<SignUpController> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
+        appBar: AppBar(),
         body: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               TitleText(),
               const SizedBox(height: TSizes.defaultSpace),
-              TextFieldWidgetSignUp(isChecked: controller.isChecked),
+              TextFieldWidgetSignUp(
+                isChecked: controller.isChecked,
+                isObscure: controller.isObscure,
+              ),
 
               /// checkbox for terms and conditions
               const SizedBox(height: TSizes.defaultSpace),

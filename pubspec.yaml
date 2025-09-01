@@ -36,8 +36,6 @@ dependencies:
   package_info_plus:
   connectivity_plus:
   device_info_plus:
-  google_fonts:
-
   get_storage:
   iconsax:
   # The following adds the Cupertino Icons font to your application.
@@ -96,3 +94,19 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
+flutter_native_splash:
+  #white color
+  color: "#f5f5f5"
+  color_dark: "#000000"
+  image: assets/images/splash/splash.jpeg
+  image_dark: assets/images/splash/splash_dark.png
+  ios: true
+  web: false
+  android: true
+  fullscreen: true
+
+android_12:
+    image: assets/images/splash/splash.jpeg
+    image_dark: assets/images/splash/splash_dark.png
+    color: "#f5f5f5"
+    color_dark: "#000000"
